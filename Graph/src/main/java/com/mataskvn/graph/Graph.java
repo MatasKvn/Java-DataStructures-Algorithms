@@ -7,23 +7,28 @@ import java.util.Map;
 
 public class Graph<T>
 {
-    public Map<Node<T>, List<Node<T>>> adjacencyMap;
+    public Map<T, List<Edge<T>>> adjacencyMap;
 
     public Graph()
     {
-        adjacencyMap = new HashMap<Node<T>, List<Node<T>>>();
+        adjacencyMap = new HashMap<T, List<Edge<T>>>();
     }
 
-    public void addVertex(Node<T> node)
+    public void addVertex(T vertex)
     {
-        adjacencyMap.put(node, new ArrayList<Node<T>>());
+        adjacencyMap.put(vertex, new ArrayList<Edge<T>>());
+    }
+
+    public void addEdge(T source, T destination, int weight)
+    {
+        adjacencyMap.get(source).add(new Edge<>(destination, weight));
     }
 
 
 
     public void printGraph()
     {
-        for (Map.Entry<Node<T>, List<Node<T>>> entry : adjacencyMap.entrySet())
+        for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
         {
             System.out.println(entry.getKey().toString() + " -> " + entry.getValue().toString());
         }
@@ -32,11 +37,11 @@ public class Graph<T>
     public static void main(String[] args) {
         Graph<Integer> graph = new Graph<Integer>();
 
-        Node<Integer> node1 = new Node<Integer>(75, 1);
-        ArrayList<Node<Integer>> adjList1 = new ArrayList<Node<Integer>>();
-
-        graph.addVertex(new Node<>(17, 1));
-        graph.addVertex(new Node<>(18, 1));
+        graph.addVertex(5);
+        graph.addVertex(6);
+        graph.addEdge(5, 6, 0);
+        graph.addEdge(5,5, 6);
+        graph.addEdge(6,6, 0);
 
         graph.printGraph();
         System.out.println("aaaaaa");
@@ -46,21 +51,21 @@ public class Graph<T>
 
 }
 
-class Node<T>
+class Edge<T>
 {
-    private T node;
+    private T destination;
 
     private int weight;
 
-    Node(T node, int w)
+    Edge(T value, int weight)
     {
-        this.node = node;
+        this.destination = value;
         this.weight = weight;
     }
 
     @Override
     public String toString()
     {
-        return "{" + node + " " + weight + "}";
+        return "{" + destination + " " + weight + "}";
     }
 }
