@@ -1,5 +1,9 @@
+# ignore itself
+.gitignore
+
 # ignore Intellij IDEA files
 .idea
 
-#ignore pom template.xml
+# ignore pom template.xml
 pom template.xml
+
