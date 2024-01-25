@@ -55,6 +55,8 @@ public class Graph<T>
 
     public List<Edge<T>> dijkstra(T beginning, T end)
     {
+        if (beginning.equals(end))
+            return new ArrayList<>();
         List<List<Edge<T>>> paths = dijkstra_recursive(
                 beginning, end,0,new Stack<>(), 0, new ArrayList<List<Edge<T>>>(), new ArrayList<Edge<T>>()
                 );
@@ -119,19 +121,20 @@ public class Graph<T>
 //        graph.addVertex("Peter");
 //        graph.addVertex("Anton");
         graph.addEdge("Joe","Peter",0);
+        graph.addEdge("Peter","Joe",0);
         graph.addEdge("Peter","Anton",0);
         graph.addEdge("Joe","Anton", 6);
         graph.addEdge("a","b",999);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
-        System.out.println("Min path: " + Graph.getPathRepresentationString("Joe" , graph.dijkstra("Joe", "Anton")));
+
+        var path = graph.dijkstra("Joe", "Joe");
+        System.out.println("Min path: " + Graph.<String>getPathRepresentationString("Joe", path));
 
         System.out.println("aaaaaa");
 
     }
-
-
 }
 
 class Edge<T>

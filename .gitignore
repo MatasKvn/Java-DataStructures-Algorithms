@@ -7,3 +7,6 @@
 # ignore pom template.xml
 pom template.xml
 
+# ignore compiled directory
+target/
+
