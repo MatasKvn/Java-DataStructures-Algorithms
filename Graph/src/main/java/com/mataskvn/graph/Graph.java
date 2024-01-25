@@ -111,7 +111,30 @@ public class Graph<T>
     }
 
 
+    public List<T> breadthFirstSearch(T node)
+    {
+        Stack<T> visitedStack = new Stack<T>();
+        Queue<T> queue = new PriorityQueue<T>();
 
+        visitedStack.add(node);
+        queue.add(node);
+        while (!queue.isEmpty())
+        {
+            node = queue.remove();
+
+            for (Edge<T> edge : adjacencyMap.get(node))
+            {
+                if (!visitedStack.contains(edge.getValue()))
+                {
+                    visitedStack.push(edge.getValue());
+                    queue.add(edge.getValue());
+                }
+            }
+        }
+
+        System.out.println(visitedStack);
+        return visitedStack;
+    }
 
     // MAIN
     public static void main(String[] args) {
@@ -120,17 +143,23 @@ public class Graph<T>
 //        graph.addVertex("Joe");
 //        graph.addVertex("Peter");
 //        graph.addVertex("Anton");
-        graph.addEdge("Joe","Peter",0);
-        graph.addEdge("Peter","Joe",0);
-        graph.addEdge("Peter","Anton",0);
-        graph.addEdge("Joe","Anton", 6);
-        graph.addEdge("a","b",999);
+        graph.addEdge("a","b",0);
+        graph.addEdge("a","o",0);
+        graph.addEdge("a","c",0);
+        graph.addEdge("b","a",0);
+        graph.addEdge("b","c",0);
+        graph.addEdge("b","n",8);
+        graph.addEdge("c","d",0);
+        graph.addEdge("d","e", 6);
+        graph.addEdge("e","f", 4);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
 
-        var path = graph.dijkstra("Joe", "Joe");
-        System.out.println("Min path: " + Graph.<String>getPathRepresentationString("Joe", path));
+        var path = graph.dijkstra("a", "f");
+        System.out.println("Min path: " + Graph.<String>getPathRepresentationString("a", path));
+
+        graph.breadthFirstSearch("b");
 
         System.out.println("aaaaaa");
 
