@@ -18,7 +18,16 @@ public class Graph<T>
 
     public void addEdge(T source, T destination, int weight)
     {
+        if (!adjacencyMap.containsKey(source))
+            addVertex(source);
+        if (!adjacencyMap.containsKey(destination))
+            addVertex(destination);
         adjacencyMap.get(source).add(new Edge<>(destination, weight));
+    }
+
+    public boolean containsVertex(T vertex)
+    {
+        return adjacencyMap.containsKey(vertex);
     }
 
     public String getAdjacencyRepresentationString()
@@ -106,12 +115,13 @@ public class Graph<T>
     public static void main(String[] args) {
         Graph<String> graph = new Graph<String>();
 
-        graph.addVertex("Joe");
-        graph.addVertex("Peter");
-        graph.addVertex("Anton");
+//        graph.addVertex("Joe");
+//        graph.addVertex("Peter");
+//        graph.addVertex("Anton");
         graph.addEdge("Joe","Peter",0);
         graph.addEdge("Peter","Anton",0);
         graph.addEdge("Joe","Anton", 6);
+        graph.addEdge("a","b",999);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
