@@ -26,12 +26,14 @@ public class Graph<T>
 
 
 
-    public void printGraph()
+    public String getAdjacencyRepresentationString()
     {
+        StringBuilder result = new StringBuilder();
         for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
         {
-            System.out.println(entry.getKey().toString() + " -> " + entry.getValue().toString());
+            result.append(entry.getKey().toString() + " -> " + entry.getValue().toString() + '\n');
         }
+        return result.toString();
     }
 
     public static void main(String[] args) {
@@ -43,7 +45,7 @@ public class Graph<T>
         graph.addEdge(5,5, 6);
         graph.addEdge(6,6, 0);
 
-        graph.printGraph();
+        System.out.println(graph.getAdjacencyRepresentationString());
         System.out.println("aaaaaa");
 
     }
