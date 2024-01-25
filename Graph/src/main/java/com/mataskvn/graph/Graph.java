@@ -32,14 +32,23 @@ public class Graph<T>
         return result.toString();
     }
 
+    public static<T> String getPathRepresentationString(T beginning, List<Edge<T>> path)
+    {
+        StringBuilder result = new StringBuilder(beginning.toString());
+        for (Edge<T> edge : path)
+        {
+            result.append(" -> ")
+                    .append(edge.getValue());
+        }
+        return result.toString();
+    }
+
+
     public List<Edge<T>> dijkstra(T beginning, T end)
     {
-
         List<List<Edge<T>>> paths = dijkstra_recursive(
                 beginning, end,0,new Stack<>(), 0, new ArrayList<List<Edge<T>>>(), new ArrayList<Edge<T>>()
                 );
-        if (paths == null)
-            return null;
 
         int minWeight = Integer.MAX_VALUE;
         List<Edge<T>> minWeightPath = null;
@@ -62,15 +71,10 @@ public class Graph<T>
     {
         if (begin.equals(end))
         {
-//            System.out.println("Found path with weight: " + pathWeight);
-//            System.out.println("Path: " + path.toString());
             paths.add(new ArrayList<>(path));
         }
         if (adjacencyMap.isEmpty())
-        {
-            System.out.println("Graph is empty");
-            return null;
-        }
+            return paths;
 
         visitedStack.push(begin);
         for (Edge<T> edge : adjacencyMap.get(begin))
@@ -78,16 +82,9 @@ public class Graph<T>
             if (visitedStack.contains(edge.getValue()))
                 continue;
 
-////             Debug
-//            String indentation = "";
-//            for (int i = 0; i < recursionLevel; ++i)
-//                indentation += " ";
-//            System.out.println(indentation + "Chose edge: " + edge);
-
             path.add(edge);
             dijkstra_recursive(edge.getValue(), end, recursionLevel+1, visitedStack, pathWeight+edge.getWeight(), paths, path);
             path.remove(edge);
-
         }
         visitedStack.pop();
 
@@ -107,18 +104,18 @@ public class Graph<T>
 
     // MAIN
     public static void main(String[] args) {
-        Graph<Integer> graph = new Graph<Integer>();
+        Graph<String> graph = new Graph<String>();
 
-        graph.addVertex(1);
-        graph.addVertex(2);
-        graph.addVertex(3);
-        graph.addEdge(1,2,0);
-        graph.addEdge(2,3,0);
-        graph.addEdge(1,3, 6);
+        graph.addVertex("Joe");
+        graph.addVertex("Peter");
+        graph.addVertex("Anton");
+        graph.addEdge("Joe","Peter",0);
+        graph.addEdge("Peter","Anton",0);
+        graph.addEdge("Joe","Anton", 6);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
-        System.out.println("Min path: " + graph.dijkstra(1,3));
+        System.out.println("Min path: " + Graph.getPathRepresentationString("Joe" , graph.dijkstra("Joe", "Anton")));
 
         System.out.println("aaaaaa");
 
