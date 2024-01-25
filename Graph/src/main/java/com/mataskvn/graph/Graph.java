@@ -9,16 +9,23 @@ public class Graph<T>
 {
     public Map<Node<T>, List<Node<T>>> adjacencyMap;
 
-    public Graph ()
+    public Graph()
     {
         adjacencyMap = new HashMap<Node<T>, List<Node<T>>>();
     }
+
+    public void addVertex(Node<T> node)
+    {
+        adjacencyMap.put(node, new ArrayList<Node<T>>());
+    }
+
+
 
     public void printGraph()
     {
         for (Map.Entry<Node<T>, List<Node<T>>> entry : adjacencyMap.entrySet())
         {
-            System.out.println(entry.getKey().toString() + " " + entry.getValue().toString());
+            System.out.println(entry.getKey().toString() + " -> " + entry.getValue().toString());
         }
     }
 
@@ -27,9 +34,9 @@ public class Graph<T>
 
         Node<Integer> node1 = new Node<Integer>(75, 1);
         ArrayList<Node<Integer>> adjList1 = new ArrayList<Node<Integer>>();
-        adjList1.add(node1);
 
-        graph.adjacencyMap.put(node1,adjList1);
+        graph.addVertex(new Node<>(17, 1));
+        graph.addVertex(new Node<>(18, 1));
 
         graph.printGraph();
         System.out.println("aaaaaa");
