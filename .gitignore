@@ -1,0 +1,5 @@
+# ignore Intellij IDEA files
+.idea
+
+#ignore pom template.xml
+pom template.xml
