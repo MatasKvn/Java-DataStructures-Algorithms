@@ -32,20 +32,43 @@ public class Graph<T>
         return result.toString();
     }
 
+    public List<Edge<T>> dijkstra(T beginning, T end)
+    {
+
+        List<List<Edge<T>>> paths = dijkstra_recursive(
+                beginning, end,0,new Stack<>(), 0, new ArrayList<List<Edge<T>>>(), new ArrayList<Edge<T>>()
+                );
+        if (paths == null)
+            return null;
+
+        int minWeight = Integer.MAX_VALUE;
+        List<Edge<T>> minWeightPath = null;
+
+        for (List<Edge<T>> path : paths)
+        {
+            int pathWeight = calcPathSum(path);
+            if (pathWeight < minWeight)
+            {
+                minWeight = pathWeight;
+                minWeightPath = path;
+            }
+        }
+        return minWeightPath;
+    }
 
     //
-    public List<List<Edge<T>>> dijkstra_recursive(T begin, T end, int recursionLevel,
+    private List<List<Edge<T>>> dijkstra_recursive(T begin, T end, int recursionLevel,
                                                   Stack<T> visitedStack, int pathWeight, List<List<Edge<T>>> paths, List<Edge<T>> path)
     {
         if (begin.equals(end))
         {
-            System.out.println("Found path with weight: " + pathWeight);
-            System.out.println("Path: " + path.toString());
+//            System.out.println("Found path with weight: " + pathWeight);
+//            System.out.println("Path: " + path.toString());
             paths.add(new ArrayList<>(path));
         }
         if (adjacencyMap.isEmpty())
         {
-            System.out.println("Recursion level is 3+ or graph is empty");
+            System.out.println("Graph is empty");
             return null;
         }
 
@@ -55,11 +78,11 @@ public class Graph<T>
             if (visitedStack.contains(edge.getValue()))
                 continue;
 
-            // Debug
-            String indentation = "";
-            for (int i = 0; i < recursionLevel; ++i)
-                indentation += " ";
-            System.out.println(indentation + "Chose edge: " + edge);
+////             Debug
+//            String indentation = "";
+//            for (int i = 0; i < recursionLevel; ++i)
+//                indentation += " ";
+//            System.out.println(indentation + "Chose edge: " + edge);
 
             path.add(edge);
             dijkstra_recursive(edge.getValue(), end, recursionLevel+1, visitedStack, pathWeight+edge.getWeight(), paths, path);
@@ -95,14 +118,7 @@ public class Graph<T>
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
-        System.out.println(
-                graph.dijkstra_recursive(1, 3, 0,
-                        new Stack<Integer>(),
-                        0,
-                        new ArrayList<List<Edge<Integer>>>(),
-                        new ArrayList<Edge<Integer>>()
-                )
-        );
+        System.out.println("Min path: " + graph.dijkstra(1,3));
 
         System.out.println("aaaaaa");
 
