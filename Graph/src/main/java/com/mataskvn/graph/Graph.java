@@ -1,7 +1,5 @@
 package com.mataskvn.graph;
 
-import jdk.jshell.spi.ExecutionControl;
-
 import java.util.*;
 
 public class Graph<T>
@@ -49,7 +47,7 @@ public class Graph<T>
         for (Edge<T> edge : path)
         {
             result.append(" -> ")
-                    .append(edge.getValue());
+                    .append(edge.getNode());
         }
         return result.toString();
     }
@@ -92,11 +90,11 @@ public class Graph<T>
         visitedStack.push(begin);
         for (Edge<T> edge : adjacencyMap.get(begin))
         {
-            if (visitedStack.contains(edge.getValue()))
+            if (visitedStack.contains(edge.getNode()))
                 continue;
 
             path.add(edge);
-            dijkstra_recursive(edge.getValue(), end, recursionLevel+1, visitedStack, pathWeight+edge.getWeight(), paths, path);
+            dijkstra_recursive(edge.getNode(), end, recursionLevel+1, visitedStack, pathWeight+edge.getWeight(), paths, path);
             path.remove(edge);
         }
         visitedStack.pop();
@@ -126,10 +124,10 @@ public class Graph<T>
 
             for (Edge<T> edge : adjacencyMap.get(node))
             {
-                if (!visitedStack.contains(edge.getValue()))
+                if (!visitedStack.contains(edge.getNode()))
                 {
-                    visitedStack.push(edge.getValue());
-                    queue.add(edge.getValue());
+                    visitedStack.push(edge.getNode());
+                    queue.add(edge.getNode());
                 }
             }
         }
@@ -142,10 +140,10 @@ public class Graph<T>
         visitedStack.push(node);
         for (Edge<T> edge : adjacencyMap.get(node))
         {
-            if (visitedStack.contains(edge.getValue()))
+            if (visitedStack.contains(edge.getNode()))
                 continue;
 
-            depthFirstSearch_recursive(edge.getValue(), visitedStack);
+            depthFirstSearch_recursive(edge.getNode(), visitedStack);
         }
 
         return visitedStack;
@@ -169,6 +167,7 @@ public class Graph<T>
         graph.addEdge("c","d",0);
         graph.addEdge("d","e", 6);
         graph.addEdge("e","f", 4);
+        graph.addEdge("o","a", 4);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
@@ -181,24 +180,3 @@ public class Graph<T>
     }
 }
 
-class Edge<T>
-{
-    private T value;
-
-    private int weight;
-
-    Edge(T value, int weight)
-    {
-        this.value = value;
-        this.weight = weight;
-    }
-
-    public T getValue() { return value; }
-    public int getWeight() { return weight; }
-
-    @Override
-    public String toString()
-    {
-        return "{" + value + " " + weight + "}";
-    }
-}
