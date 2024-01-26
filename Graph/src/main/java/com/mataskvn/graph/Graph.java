@@ -80,11 +80,11 @@ public class Graph<T>
         visitedStack.push(begin);
         for (Edge<T> edge : adjacencyMap.get(begin))
         {
-            if (visitedStack.contains(edge.getNode()))
+            if (visitedStack.contains(edge.getVertex()))
                 continue;
 
             path.add(edge);
-            dijkstra_recursive(edge.getNode(), end, recursionLevel+1, visitedStack, pathWeight+edge.getWeight(), paths, path);
+            dijkstra_recursive(edge.getVertex(), end, recursionLevel+1, visitedStack, pathWeight+edge.getWeight(), paths, path);
             path.remove(edge);
         }
         visitedStack.pop();
@@ -100,23 +100,23 @@ public class Graph<T>
         return sum[0];
     }
 
-    public List<T> breadthFirstSearch(T node)
+    public List<T> breadthFirstSearch(T vertex)
     {
         Stack<T> visitedStack = new Stack<T>();
         Queue<T> queue = new PriorityQueue<T>();
 
-        visitedStack.add(node);
-        queue.add(node);
+        visitedStack.add(vertex);
+        queue.add(vertex);
         while (!queue.isEmpty())
         {
-            node = queue.remove();
+            vertex = queue.remove();
 
-            for (Edge<T> edge : adjacencyMap.get(node))
+            for (Edge<T> edge : adjacencyMap.get(vertex))
             {
-                if (!visitedStack.contains(edge.getNode()))
+                if (!visitedStack.contains(edge.getVertex()))
                 {
-                    visitedStack.push(edge.getNode());
-                    queue.add(edge.getNode());
+                    visitedStack.push(edge.getVertex());
+                    queue.add(edge.getVertex());
                 }
             }
         }
@@ -124,31 +124,31 @@ public class Graph<T>
     }
 
 
-    private List<T> depthFirstSearch_recursive(T node, Stack<T> visitedStack)
+    private List<T> depthFirstSearch_recursive(T vertex, Stack<T> visitedStack)
     {
-        visitedStack.push(node);
-        for (Edge<T> edge : adjacencyMap.get(node))
+        visitedStack.push(vertex);
+        for (Edge<T> edge : adjacencyMap.get(vertex))
         {
-            if (visitedStack.contains(edge.getNode()))
+            if (visitedStack.contains(edge.getVertex()))
                 continue;
 
-            depthFirstSearch_recursive(edge.getNode(), visitedStack);
+            depthFirstSearch_recursive(edge.getVertex(), visitedStack);
         }
 
         return visitedStack;
     }
 
-    public List<T> depthFirstSearch(T node)
+    public List<T> depthFirstSearch(T vertex)
     {
-        return depthFirstSearch_recursive(node, new Stack<T>());
+        return depthFirstSearch_recursive(vertex, new Stack<T>());
     }
 
 
     public boolean containsCycles()
     {
-
         for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
         {
+            System.out.println("Vertex: " + entry.getKey() + ": " + containsCycles_recursive(entry.getKey(), new Stack<T>()));
             if (containsCycles_recursive(entry.getKey(), new Stack<T>()))
                 return true;
         }
@@ -156,22 +156,20 @@ public class Graph<T>
         return false;
     }
 
-    private boolean containsCycles_recursive(T node, Stack<T> visited)
+    private boolean containsCycles_recursive(T vertex, Stack<T> visited)
     {
-        if (visited.contains(node))
+        if (visited.contains(vertex))
             return true;
 
-        visited.push(node);
-        for (Edge<T> edge : adjacencyMap.get(node))
-        {
-            if (visited.contains(edge.getNode()))
-                return true;
-            return containsCycles_recursive(edge.getNode(),visited);
-        }
+        visited.push(vertex);
 
-        return false;
+        boolean result = false;
+        for (Edge<T> edge : adjacencyMap.get(vertex))
+            result = result || containsCycles_recursive(edge.getVertex(), visited);
+        visited.pop();
+
+        return result;
     }
-
 
 
 
@@ -184,18 +182,19 @@ public class Graph<T>
     public static void main(String[] args) {
         Graph<String> graph = new Graph<String>();
 
-        graph.addEdge("a","b",0);
+//        graph.addEdge("a","b",0);
+//        graph.addEdge("a","a",0);
 //        graph.addEdge("b","a",0);
 
         graph.addEdge("a","o",0);
-        graph.addEdge("a","c",0);
+//        graph.addEdge("a","c",0);
 //        graph.addEdge("b","a",0);
         graph.addEdge("b","c",0);
         graph.addEdge("b","n",8);
         graph.addEdge("c","d",0);
         graph.addEdge("d","e", 6);
         graph.addEdge("e","f", 4);
-//        graph.addEdge("o","a", 4);
+        graph.addEdge("f","c", 4);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
@@ -229,10 +228,12 @@ public class Graph<T>
         @Override
         public String toString() {
             StringBuilder result = new StringBuilder(start.toString());
+            if (edges == null || edges.isEmpty())
+                return result.toString();
             for (Edge<T> edge : edges)
             {
                 result.append(" -> ")
-                        .append(edge.getNode());
+                        .append(edge.getVertex());
             }
             return result.toString();
         }
