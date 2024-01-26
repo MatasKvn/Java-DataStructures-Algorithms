@@ -13,7 +13,7 @@ public class Graph<T>
 
     public void addVertex(T vertex)
     {
-        adjacencyMap.put(vertex, new ArrayList<Edge<T>>());
+        adjacencyMap.put(vertex, new LinkedList<Edge<T>>());
     }
 
     public void addEdge(T source, T destination, int weight)
@@ -148,7 +148,6 @@ public class Graph<T>
     {
         for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
         {
-            System.out.println("Vertex: " + entry.getKey() + ": " + containsCycles_recursive(entry.getKey(), new Stack<T>()));
             if (containsCycles_recursive(entry.getKey(), new Stack<T>()))
                 return true;
         }
@@ -171,10 +170,45 @@ public class Graph<T>
         return result;
     }
 
+    /**
+     * Deletes vertex from graph if there are no dependencies on the vertex
+     * @param vertex
+     * @return true if no edges point to the <code>vertex</code>, false otherwise*/
+    public boolean removeVertex(T vertex)
+    {
+        for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
+        {
+            if (entry.getKey().equals(vertex))
+                continue;
 
+            for (Edge<T> edge : entry.getValue())
+            {
+                if (edge.getVertex().equals(vertex))
+                    return false;
+            }
+        }
 
+        return adjacencyMap.remove(vertex, adjacencyMap.get(vertex));
 
+    }
 
+    /**
+     * Deletes the given {@code vertex} from the graph along with all edges pointing to the vertex
+     * @param vertex
+     * @return true if deletion successful, false otherwise*/
+    public boolean removeVertexCascade(T vertex)
+    {
+        for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
+        {
+            for (Edge<T> edge : entry.getValue())
+            {
+                if (edge.containsVertex(vertex))
+                    entry.getValue().remove(edge);
+            }
+        }
+
+        return adjacencyMap.remove(vertex, adjacencyMap.get(vertex));
+    }
 
 
 
@@ -182,19 +216,20 @@ public class Graph<T>
     public static void main(String[] args) {
         Graph<String> graph = new Graph<String>();
 
-//        graph.addEdge("a","b",0);
-//        graph.addEdge("a","a",0);
-//        graph.addEdge("b","a",0);
+
+        graph.addEdge("a","b",0);
+        graph.addEdge("a","a",0);
+        graph.addEdge("b","a",0);
 
         graph.addEdge("a","o",0);
-//        graph.addEdge("a","c",0);
-//        graph.addEdge("b","a",0);
-        graph.addEdge("b","c",0);
+        graph.addEdge("a","c",0);
+        graph.addEdge("b","a",0);
         graph.addEdge("b","n",8);
         graph.addEdge("c","d",0);
         graph.addEdge("d","e", 6);
         graph.addEdge("e","f", 4);
         graph.addEdge("f","c", 4);
+        graph.addEdge("m","a",5);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
@@ -206,6 +241,9 @@ public class Graph<T>
         System.out.println(graph.depthFirstSearch("b"));
 
         System.out.println("Graph contains cycles: " + graph.containsCycles());
+
+        System.out.println(graph.removeVertex("e"));
+        System.out.println(graph.getAdjacencyRepresentationString());
     }
 
 

@@ -20,4 +20,9 @@ public class Edge<T>
     {
         return "(" + vertex + ", " + weight + ")";
     }
+
+    public boolean containsVertex(T vertex)
+    {
+        return this.vertex.equals(vertex);
+    }
 }
