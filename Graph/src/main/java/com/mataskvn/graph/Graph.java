@@ -1,5 +1,7 @@
 package com.mataskvn.graph;
 
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.*;
 
 public class Graph<T>
@@ -131,18 +133,33 @@ public class Graph<T>
                 }
             }
         }
-
-        System.out.println(visitedStack);
         return visitedStack;
+    }
+
+
+    private List<T> depthFirstSearch_recursive(T node, Stack<T> visitedStack)
+    {
+        visitedStack.push(node);
+        for (Edge<T> edge : adjacencyMap.get(node))
+        {
+            if (visitedStack.contains(edge.getValue()))
+                continue;
+
+            depthFirstSearch_recursive(edge.getValue(), visitedStack);
+        }
+
+        return visitedStack;
+    }
+
+    public List<T> depthFirstSearch(T node)
+    {
+        return depthFirstSearch_recursive(node, new Stack<T>());
     }
 
     // MAIN
     public static void main(String[] args) {
         Graph<String> graph = new Graph<String>();
 
-//        graph.addVertex("Joe");
-//        graph.addVertex("Peter");
-//        graph.addVertex("Anton");
         graph.addEdge("a","b",0);
         graph.addEdge("a","o",0);
         graph.addEdge("a","c",0);
@@ -159,10 +176,8 @@ public class Graph<T>
         var path = graph.dijkstra("a", "f");
         System.out.println("Min path: " + Graph.<String>getPathRepresentationString("a", path));
 
-        graph.breadthFirstSearch("b");
-
-        System.out.println("aaaaaa");
-
+        System.out.println(graph.breadthFirstSearch("b"));
+        System.out.println(graph.depthFirstSearch("b"));
     }
 }
 
