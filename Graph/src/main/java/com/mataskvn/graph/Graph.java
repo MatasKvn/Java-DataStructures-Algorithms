@@ -55,7 +55,7 @@ public class Graph<T>
 
         for (List<Edge<T>> path : paths)
         {
-            int pathWeight = calcPathSum(path);
+            int pathWeight = Graph.Path.<T>calcPathSum(path);
             if (pathWeight < minWeight)
             {
                 minWeight = pathWeight;
@@ -63,7 +63,7 @@ public class Graph<T>
             }
         }
 
-        return new Graph.Path<T>(beginning, minWeightPath);
+        return new Graph.Path<T>(beginning, minWeightPath, minWeight);
     }
 
     //
@@ -91,14 +91,7 @@ public class Graph<T>
 
         return paths;
     }
-    private int calcPathSum(List<Edge<T>> path)
-    {
-        if (path == null || path.isEmpty())
-            return Integer.MAX_VALUE;
-        int[] sum = new int[]{0};
-        path.forEach(x -> sum[0] = sum[0] + x.getWeight());
-        return sum[0];
-    }
+
 
     public List<T> breadthFirstSearch(T vertex)
     {
@@ -187,9 +180,7 @@ public class Graph<T>
                     return false;
             }
         }
-
         return adjacencyMap.remove(vertex, adjacencyMap.get(vertex));
-
     }
 
     /**
@@ -206,11 +197,19 @@ public class Graph<T>
                     entry.getValue().remove(edge);
             }
         }
-
         return adjacencyMap.remove(vertex, adjacencyMap.get(vertex));
     }
 
-
+    public boolean removeEdge(T startVertex, T endVertex, int weight)
+    {
+        List<Edge<T>> edges = adjacencyMap.get(startVertex);
+        for (Edge<T> edge : edges)
+        {
+            if (edge.getVertex().equals(endVertex) && edge.getWeight() == weight)
+                return edges.remove(edge);
+        }
+        return false;
+    }
 
     // MAIN
     public static void main(String[] args) {
@@ -235,7 +234,7 @@ public class Graph<T>
 
 
         var path = graph.dijkstra("a", "f");
-        System.out.println("Min path: " + path.toString());
+        System.out.println("Min path: " + path.toString() + " \nWeight: " + path.getPathWeight());
 
         System.out.println(graph.breadthFirstSearch("b"));
         System.out.println(graph.depthFirstSearch("b"));
@@ -244,6 +243,11 @@ public class Graph<T>
 
         System.out.println(graph.removeVertex("e"));
         System.out.println(graph.getAdjacencyRepresentationString());
+
+        System.out.println(graph.removeEdge("e", "f",4));
+        System.out.println(graph.getAdjacencyRepresentationString());
+
+
     }
 
 
@@ -251,6 +255,7 @@ public class Graph<T>
     {
         private T start;
         private List<Edge<T>> edges;
+        private int weight;
 
         public Path(T start)
         {
@@ -262,6 +267,13 @@ public class Graph<T>
             this.start = start;
             this.edges = edges;
         }
+        public Path(T start, List<Edge<T>> edges, int weight)
+        {
+            this.start = start;
+            this.edges = edges;
+            this.weight = weight;
+        }
+
 
         @Override
         public String toString() {
@@ -294,6 +306,20 @@ public class Graph<T>
         public void setStart(T start)
         {
             this.start = start;
+        }
+
+        public int getPathWeight()
+        {
+            return weight;
+        }
+
+        public static <T> int calcPathSum(List<Edge<T>> path)
+        {
+            if (path == null || path.isEmpty())
+                return Integer.MAX_VALUE;
+            int[] sum = new int[]{0};
+            path.forEach(x -> sum[0] = sum[0] + x.getWeight());
+            return sum[0];
         }
     }
 }
