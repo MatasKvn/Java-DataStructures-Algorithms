@@ -41,22 +41,11 @@ public class Graph<T>
         return result.toString();
     }
 
-    public static<T> String getPathRepresentationString(T beginning, List<Edge<T>> path)
-    {
-        StringBuilder result = new StringBuilder(beginning.toString());
-        for (Edge<T> edge : path)
-        {
-            result.append(" -> ")
-                    .append(edge.getNode());
-        }
-        return result.toString();
-    }
 
-
-    public List<Edge<T>> dijkstra(T beginning, T end)
+    public Path<T> dijkstra(T beginning, T end)
     {
         if (beginning.equals(end))
-            return new ArrayList<>();
+            return new Graph.Path<T>(beginning);
         List<List<Edge<T>>> paths = dijkstra_recursive(
                 beginning, end,0,new Stack<>(), 0, new ArrayList<List<Edge<T>>>(), new ArrayList<Edge<T>>()
                 );
@@ -73,7 +62,8 @@ public class Graph<T>
                 minWeightPath = path;
             }
         }
-        return minWeightPath;
+
+        return new Graph.Path<T>(beginning, minWeightPath);
     }
 
     //
@@ -109,7 +99,6 @@ public class Graph<T>
         path.forEach(x -> sum[0] = sum[0] + x.getWeight());
         return sum[0];
     }
-
 
     public List<T> breadthFirstSearch(T node)
     {
@@ -154,29 +143,119 @@ public class Graph<T>
         return depthFirstSearch_recursive(node, new Stack<T>());
     }
 
+
+    public boolean containsCycles()
+    {
+
+        for (Map.Entry<T, List<Edge<T>>> entry : adjacencyMap.entrySet())
+        {
+            if (containsCycles_recursive(entry.getKey(), new Stack<T>()))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean containsCycles_recursive(T node, Stack<T> visited)
+    {
+        if (visited.contains(node))
+            return true;
+
+        visited.push(node);
+        for (Edge<T> edge : adjacencyMap.get(node))
+        {
+            if (visited.contains(edge.getNode()))
+                return true;
+            return containsCycles_recursive(edge.getNode(),visited);
+        }
+
+        return false;
+    }
+
+
+
+
+
+
+
+
+
     // MAIN
     public static void main(String[] args) {
         Graph<String> graph = new Graph<String>();
 
         graph.addEdge("a","b",0);
+//        graph.addEdge("b","a",0);
+
         graph.addEdge("a","o",0);
         graph.addEdge("a","c",0);
-        graph.addEdge("b","a",0);
+//        graph.addEdge("b","a",0);
         graph.addEdge("b","c",0);
         graph.addEdge("b","n",8);
         graph.addEdge("c","d",0);
         graph.addEdge("d","e", 6);
         graph.addEdge("e","f", 4);
-        graph.addEdge("o","a", 4);
+//        graph.addEdge("o","a", 4);
 
         System.out.println(graph.getAdjacencyRepresentationString());
 
 
         var path = graph.dijkstra("a", "f");
-        System.out.println("Min path: " + Graph.<String>getPathRepresentationString("a", path));
+        System.out.println("Min path: " + path.toString());
 
         System.out.println(graph.breadthFirstSearch("b"));
         System.out.println(graph.depthFirstSearch("b"));
+
+        System.out.println("Graph contains cycles: " + graph.containsCycles());
+    }
+
+
+    public static class Path<T>
+    {
+        private T start;
+        private List<Edge<T>> edges;
+
+        public Path(T start)
+        {
+            this.start = start;
+            this.edges = null;
+        }
+        public Path(T start, List<Edge<T>> edges)
+        {
+            this.start = start;
+            this.edges = edges;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder result = new StringBuilder(start.toString());
+            for (Edge<T> edge : edges)
+            {
+                result.append(" -> ")
+                        .append(edge.getNode());
+            }
+            return result.toString();
+        }
+
+        public List<Edge<T>> getEdges()
+        {
+            return edges;
+        }
+
+        public T getStart()
+        {
+            return start;
+        }
+
+        public void setEdges(List<Edge<T>> edges)
+        {
+            this.edges = edges;
+        }
+
+        public void setStart(T start)
+        {
+            this.start = start;
+        }
     }
 }
 
